@@ -30,7 +30,6 @@ void Tagging::setApp(const QString &app, const QString &uri, const QString &vers
     this->version = version;
     this->comment = comment;
     this->uri = uri;
-
     this->app();
 }
 
@@ -42,10 +41,17 @@ bool Tagging::tag(const QString &tag, const QString &color, const QString &comme
         {TAG::KEYMAP[TAG::KEY::COLOR], color},
         {TAG::KEYMAP[TAG::KEY::ADD_DATE], QDateTime::currentDateTime()},
         {TAG::KEYMAP[TAG::KEY::COMMENT], comment},
-        {TAG::KEYMAP[TAG::KEY::DEVICE], this->device()}
     };
 
-    return this->insert(TAG::TABLEMAP[TAG::TABLE::TAGS], tag_map);
+    this->insert(TAG::TABLEMAP[TAG::TABLE::TAGS], tag_map);
+
+    QVariantMap tag_user_map
+    {
+        {TAG::KEYMAP[TAG::KEY::TAG], tag},
+        {TAG::KEYMAP[TAG::KEY::MAC], this->id()}
+    };
+
+    return this->insert(TAG::TABLEMAP[TAG::TABLE::TAGS_USERS], tag_user_map);
 }
 
 bool Tagging::tagUrl(const QString &url, const QString &tag, const QString &color, const QString &comment)
@@ -68,7 +74,26 @@ bool Tagging::tagUrl(const QString &url, const QString &tag, const QString &colo
     return this->insert(TAG::TABLEMAP[TAG::TABLE::TAGS_URLS], tag_url_map);
 }
 
-QStringList Tagging::getTags(const QString &url)
+bool Tagging::tagAbstract(const QString &tag, const QString &key, const QString &lot, const QString &color, const QString &comment)
+{
+    this->abstract(key, lot, comment);
+    this->tag(tag, color, comment);
+
+    QVariantMap tag_abstract_map
+    {
+        {TAG::KEYMAP[TAG::KEY::APP], this->application},
+        {TAG::KEYMAP[TAG::KEY::URI], this->uri},
+        {TAG::KEYMAP[TAG::KEY::TAG], tag},
+        {TAG::KEYMAP[TAG::KEY::KEY], key},
+        {TAG::KEYMAP[TAG::KEY::LOT], lot},
+        {TAG::KEYMAP[TAG::KEY::ADD_DATE], QDateTime::currentDateTime()},
+        {TAG::KEYMAP[TAG::KEY::COMMENT], comment},
+    };
+
+    return this->insert(TAG::TABLEMAP[TAG::TABLE::TAGS_ABSTRACT], tag_abstract_map);
+}
+
+QStringList Tagging::getUrlTags(const QString &url)
 {
     return {};
 }
@@ -134,6 +159,21 @@ bool Tagging::user()
     };
 
     return this->insert(TAG::TABLEMAP[TAG::TABLE::USERS], user_map);
+}
+
+bool Tagging::abstract(const QString &key, const QString &lot, const QString &comment)
+{
+    QVariantMap abstract_map
+    {
+        {TAG::KEYMAP[TAG::KEY::APP], this->application},
+        {TAG::KEYMAP[TAG::KEY::URI], this->uri},
+        {TAG::KEYMAP[TAG::KEY::KEY], key},
+        {TAG::KEYMAP[TAG::KEY::LOT], lot},
+        {TAG::KEYMAP[TAG::KEY::ADD_DATE], QDateTime::currentDateTime()},
+        {TAG::KEYMAP[TAG::KEY::COMMENT], comment},
+    };
+
+    return this->insert(TAG::TABLEMAP[TAG::TABLE::ABSTRACT], abstract_map);
 }
 
 

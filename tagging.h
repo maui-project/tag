@@ -14,7 +14,8 @@ public:
     Q_INVOKABLE void setApp(const QString &app, const QString &uri, const QString &version, const QString &comment = QString());
     Q_INVOKABLE bool tag(const QString &tag, const QString &color=QString(), const QString &comment=QString());
     Q_INVOKABLE bool tagUrl(const QString &url, const QString &tag, const QString &color=QString(), const QString &comment=QString());
-    Q_INVOKABLE QStringList getTags(const QString &url);
+    Q_INVOKABLE bool tagAbstract(const QString &tag, const QString &key, const QString &lot, const QString &color = QString(), const QString &comment=QString());
+    Q_INVOKABLE QStringList getUrlTags(const QString &url);
 
     /*STATIC METHODS*/
 
@@ -34,6 +35,9 @@ private:
 
     bool app();
     bool user();
+
+protected:
+    bool abstract(const QString &key, const QString &lot, const QString &comment);
 
 signals:
 
