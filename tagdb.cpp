@@ -24,7 +24,6 @@ TAGDB::~TAGDB()
     this->m_db.close();
 }
 
-
 void TAGDB::openDB(const QString &name)
 {
     if(!QSqlDatabase::contains(name))

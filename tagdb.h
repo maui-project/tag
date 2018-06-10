@@ -24,18 +24,18 @@ class TAGDB : public QObject
 private:
     QString name;
     QSqlDatabase m_db;
+
 public:
-    explicit TAGDB(QObject *parent = nullptr);
-    ~ TAGDB();
-
-    void openDB(const QString &name);
-    void prepareCollectionDB() const;
-
     /* utils*/
     Q_INVOKABLE bool checkExistance(const QString &tableName, const QString &searchId, const QString &search);
 
 protected:
+    TAGDB(QObject *parent = nullptr);
+    ~ TAGDB();
+
     QSqlQuery getQuery(const QString &queryTxt);
+    void openDB(const QString &name);
+    void prepareCollectionDB() const;
 
     bool insert(const QString &tableName, const QVariantMap &insertData);
     bool update(const QString &tableName, const TAG::DB &updateData, const QVariantMap &where);

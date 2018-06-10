@@ -1,4 +1,6 @@
-QT += sql
+QT += \
+    sql \
+    network
 
 HEADERS += \
     $$PWD/tagging.h \
@@ -9,10 +11,10 @@ SOURCES += \
     $$PWD/tagdb.cpp \
 
 DEPENDPATH += \
-    $$PWD/tagging
+    $$PWD
 
 INCLUDEPATH += \
-     $$PWD/tagging
+     $$PWD
 
 DISTFILES += \
      $$PWD/script.sql
