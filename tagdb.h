@@ -28,6 +28,7 @@ private:
 public:
     /* utils*/
     Q_INVOKABLE bool checkExistance(const QString &tableName, const QString &searchId, const QString &search);
+    Q_INVOKABLE bool checkExistance(const QString &queryStr);
 
 protected:
     TAGDB(QObject *parent = nullptr);

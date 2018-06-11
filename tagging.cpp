@@ -24,6 +24,38 @@ Tagging *Tagging::getInstance(const QString &app, const QString &version, const 
     }
 }
 
+QVariantList Tagging::get(const QString &queryTxt)
+{
+    QVariantList mapList;
+
+    auto query = this->getQuery(queryTxt);
+
+    if(query.exec())
+    {
+        while(query.next())
+        {
+            QVariantMap data;
+            for(auto key : TAG::KEYMAP.keys())
+                if(query.record().indexOf(TAG::KEYMAP[key]) > -1)
+                    data[TAG::KEYMAP[key]] = query.value(TAG::KEYMAP[key]).toString();
+
+            mapList<< data;
+
+        }
+
+    }else qDebug()<< query.lastError()<< query.lastQuery();
+
+    return mapList;
+}
+
+bool Tagging::tagExists(const QString &tag, const bool &strict)
+{
+    return !strict ? this->checkExistance(TAG::TABLEMAP[TAG::TABLE::TAGS], TAG::KEYMAP[TAG::KEY::TAG], tag) :
+            this->checkExistance(QString("select t.tag from TAGS t inner join TAGS_USERS tu on t.tag = tu.tag inner join APPS_USERS au on au.mac = tu.mac "
+            "where au.app = '%1' and au.uri = '%2'").arg(this->application, this->uri));
+}
+
+
 void Tagging::setApp(const QString &app, const QString &uri, const QString &version, const QString &comment)
 {
     this->application = app;
@@ -93,9 +125,63 @@ bool Tagging::tagAbstract(const QString &tag, const QString &key, const QString 
     return this->insert(TAG::TABLEMAP[TAG::TABLE::TAGS_ABSTRACT], tag_abstract_map);
 }
 
-QStringList Tagging::getUrlTags(const QString &url)
+QVariantList Tagging::getUrlsTags(const bool &strict)
 {
-    return {};
+    auto res = !strict ? this->get("select t.* from tags t inner join TAGS_URLS turl on turl.tag = t.tag") :
+                         this->get(QString("select t.* from TAGS t inner join TAGS_USERS tu on t.tag = tu.tag "
+                                           "inner join APPS_USERS au on au.mac = tu.mac "
+                                           "inner join TAGS_URLS turl on turl.tag = t.tag "
+                                           "where au.app = '%1' and au.uri = '%2'").arg(this->application, this->uri));
+    return res;
+}
+
+QVariantList Tagging::getAbstractsTags(const bool &strict)
+{
+    auto res = !strict ? this->get("select t.* from tags t inner join TAGS_ABSTRACT tab on tab.tag = t.tag") :
+                         this->get(QString("select t.* from TAGS t inner join TAGS_USERS tu on t.tag = tu.tag "
+                                           "inner join APPS_USERS au on au.mac = tu.mac "
+                                           "inner join TAGS_ABSTRACT tab on tab.tag = t.tag "
+                                           "where au.app = '%1' and au.uri = '%2'").arg(this->application, this->uri));
+    return res;
+}
+
+QVariantList Tagging::getAllTags(const bool &strict)
+{
+    auto res = !strict ? this->get("select * from tags") :
+                         this->get(QString("select t.* from TAGS t inner join TAGS_USERS tu on t.tag = tu.tag inner join APPS_USERS au on au.mac = tu.mac "
+                                           "where au.app = '%1' and au.uri = '%2'").arg(this->application, this->uri));
+    return res;
+}
+
+QVariantList Tagging::getUrls(const QString &tag, const bool &strict)
+{
+    auto res =  !strict ? this->get(QString("select turl.*, t.color, t.comment as tagComment from TAGS t inner join TAGS_URLS turl on turl.tag = t.tag where t.tag = '%1'").arg(tag)):
+                          this->get(QString("select turl.*, t.color, t.comment as tagComment from TAGS t "
+                                            "inner join TAGS_USERS tu on t.tag = tu.tag "
+                                            "inner join APPS_USERS au on au.mac = tu.mac "
+                                            "inner join TAGS_URLS turl on turl.tag = t.tag "
+                                            "where au.app = '%1' and au.uri = '%2' "
+                                            "and t.tag = '%3'").arg(this->application, this->uri, tag));
+    return res;
+}
+
+QVariantList Tagging::getUrlTags(const QString &url, const bool &strict)
+{
+
+    auto res = !strict ? this->get(QString("select turl.*, t.color, t.comment as tagComment from tags t inner join TAGS_URLS turl on turl.tag = t.tag where turl.url  = '%1'").arg(url)) :
+                         this->get(QString("select t.* from TAGS t inner join TAGS_USERS tu on t.tag = tu.tag inner join APPS_USERS au on au.mac = tu.mac inner join TAGS_URLS turl on turl.tag = t.tag "
+                                           "where au.app = '%1' and au.uri = '%2' and turl.url = '%3'").arg(this->application, this->uri, url));
+    return res;
+}
+
+QVariantList Tagging::getAbstractTags(const QString &key, const QString &lot, const bool &strict)
+{
+    auto res = !strict ? this->get(QString("select t.* from TAGS t inner join TAGS_ABSTRACT ta on ta.tag = t.tag where ta.key = '%1' and ta.lot = '%2'").arg(key, lot)) :
+                         this->get(QString("select t.* from TAGS t inner join TAGS_ABSTRACT ta on ta.tag = t.tag "
+                                           "inner join TAGS_USERS tu on t.tag = tu.tag "
+                                           "inner join APPS_USERS au on au.mac = tu.mac "
+                                           "where au.app = '%1' and au.uri = '%2' and ta.key = '%3' and ta.lot = '%4'").arg(this->application, this->uri, key, lot));
+    return res;
 }
 
 QString Tagging::mac()

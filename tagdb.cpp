@@ -112,6 +112,18 @@ bool TAGDB::checkExistance(const QString &tableName, const QString &searchId, co
     return false;
 }
 
+bool TAGDB::checkExistance(const QString &queryStr)
+{
+    auto query = this->getQuery(queryStr);
+
+    if (query.exec())
+    {
+        if (query.next()) return true;
+    }else qDebug()<<query.lastError().text();
+
+    return false;
+}
+
 QSqlQuery TAGDB::getQuery(const QString &queryTxt)
 {
     QSqlQuery query(queryTxt, this->m_db);
