@@ -52,7 +52,7 @@ bool Tagging::tagExists(const QString &tag, const bool &strict)
 {
     return !strict ? this->checkExistance(TAG::TABLEMAP[TAG::TABLE::TAGS], TAG::KEYMAP[TAG::KEY::TAG], tag) :
             this->checkExistance(QString("select t.tag from TAGS t inner join TAGS_USERS tu on t.tag = tu.tag inner join APPS_USERS au on au.mac = tu.mac "
-            "where au.app = '%1' and au.uri = '%2'").arg(this->application, this->uri));
+            "where au.app = '%1' and au.uri = '%2' and t.tag = '%3'").arg(this->application, this->uri, tag));
 }
 
 
