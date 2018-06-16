@@ -15,7 +15,8 @@
 #include <QDir>
 #include <QVariantMap>
 
-#include "../../utils.h"
+#include "tag.h"
+#include "utils.h"
 
 
 class TAGDB : public QObject

@@ -5,6 +5,7 @@ QT += \
 HEADERS += \
     $$PWD/tagging.h \
     $$PWD/tagdb.h \
+    $$PWD/tag.h
 
 SOURCES += \
     $$PWD/tagging.cpp \
