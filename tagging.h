@@ -10,6 +10,7 @@ class Tagging : public TAGDB
     Q_OBJECT
 public:
     static Tagging *getInstance(const QString &app, const QString &version, const QString &uri, const QString &comment = QString());
+    static Tagging *getInstance();
 
     Q_INVOKABLE QVariantList get(const QString &query);
 

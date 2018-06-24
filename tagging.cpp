@@ -9,7 +9,7 @@ Tagging::Tagging(const QString &app, const QString &version, const QString &uri,
 
 Tagging::~Tagging() {}
 
-Tagging* Tagging::instance = 0;
+Tagging *Tagging::instance = nullptr;
 Tagging *Tagging::getInstance(const QString &app, const QString &version, const QString &uri, const QString &comment)
 {
     if(!instance)
@@ -22,6 +22,11 @@ Tagging *Tagging::getInstance(const QString &app, const QString &version, const 
         qDebug()<< "getInstance(): previous instance\n";
         return instance;
     }
+}
+
+Tagging *Tagging::getInstance()
+{
+    return instance;
 }
 
 QVariantList Tagging::get(const QString &queryTxt)
@@ -147,7 +152,7 @@ QVariantList Tagging::getUrlsTags(const bool &strict)
     auto res = !strict ? this->get("select t.* from tags t inner join TAGS_URLS turl on turl.tag = t.tag") :
                          this->get(QString("select t.* from TAGS t inner join TAGS_USERS tu on t.tag = tu.tag "
                                            "inner join APPS_USERS au on au.mac = tu.mac "
-                                           "inner join TAGS_URLS turl on turl.tag = t.tag "
+                                           //                                           "inner join TAGS_URLS turl on turl.tag = t.tag "
                                            "where au.app = '%1' and au.uri = '%2'").arg(this->application, this->uri));
     return res;
 }

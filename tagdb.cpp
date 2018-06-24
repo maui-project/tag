@@ -1,8 +1,5 @@
 #include "tagdb.h"
 #include <QUuid>
-#include <QString>
-#include <QStringList>
-#include <QSqlQuery>
 
 TAGDB::TAGDB(QObject *parent) : QObject(parent)
 {
