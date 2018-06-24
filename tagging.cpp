@@ -83,12 +83,20 @@ bool Tagging::tag(const QString &tag, const QString &color, const QString &comme
         {TAG::KEYMAP[TAG::KEY::MAC], this->id()}
     };
 
-    return this->insert(TAG::TABLEMAP[TAG::TABLE::TAGS_USERS], tag_user_map);
+    if(this->insert(TAG::TABLEMAP[TAG::TABLE::TAGS_USERS], tag_user_map))
+    {
+        emit this->tagged(tag);
+        return true;
+    }
+
+    return false;
 }
 
 bool Tagging::tagUrl(const QString &url, const QString &tag, const QString &color, const QString &comment)
 {
-    this->tag(tag, color, comment);
+    auto myTag = tag.trimmed();
+
+    this->tag(myTag, color, comment);
 
     QMimeDatabase mimedb;
     auto mime = mimedb.mimeTypeForFile(url);
@@ -96,13 +104,14 @@ bool Tagging::tagUrl(const QString &url, const QString &tag, const QString &colo
     QVariantMap tag_url_map
     {
         {TAG::KEYMAP[TAG::KEY::URL], url},
-        {TAG::KEYMAP[TAG::KEY::TAG], tag},
+        {TAG::KEYMAP[TAG::KEY::TAG], myTag},
         {TAG::KEYMAP[TAG::KEY::TITLE], QFileInfo(url).baseName()},
         {TAG::KEYMAP[TAG::KEY::MIME], mime.name()},
         {TAG::KEYMAP[TAG::KEY::ADD_DATE], QDateTime::currentDateTime()},
         {TAG::KEYMAP[TAG::KEY::COMMENT], comment}
     };
 
+    emit this->urlTagged(url, myTag);
     return this->insert(TAG::TABLEMAP[TAG::TABLE::TAGS_URLS], tag_url_map);
 }
 
@@ -122,7 +131,15 @@ bool Tagging::tagAbstract(const QString &tag, const QString &key, const QString 
         {TAG::KEYMAP[TAG::KEY::COMMENT], comment},
     };
 
+    emit this->abstractTagged(key, lot, tag);
     return this->insert(TAG::TABLEMAP[TAG::TABLE::TAGS_ABSTRACT], tag_abstract_map);
+}
+
+bool Tagging::updateUrlTags(const QString &url, const QStringList &tags)
+{
+    this->removeUrlTags(url);
+    for(auto tag : tags)
+        this->tagUrl(url, tag);
 }
 
 QVariantList Tagging::getUrlsTags(const bool &strict)
@@ -182,6 +199,19 @@ QVariantList Tagging::getAbstractTags(const QString &key, const QString &lot, co
                                            "inner join APPS_USERS au on au.mac = tu.mac "
                                            "where au.app = '%1' and au.uri = '%2' and ta.key = '%3' and ta.lot = '%4'").arg(this->application, this->uri, key, lot));
     return res;
+}
+
+bool Tagging::removeUrlTags(const QString &url)
+{
+    for(auto map : this->getUrlTags(url))
+    {
+        auto tag = map.toMap().value(TAG::KEYMAP[TAG::KEY::TAG]).toString();
+
+        TAG::DB data {{TAG::KEY::URL, url}, {TAG::KEY::TAG, tag}};
+        this->remove(TAG::TABLEMAP[TAG::TABLE::TAGS_URLS], data);
+    }
+
+    return true;
 }
 
 QString Tagging::mac()

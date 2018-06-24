@@ -15,9 +15,17 @@ public:
 
     Q_INVOKABLE bool tagExists(const QString &tag, const bool &strict = false);
 
+    /* INSERTIIONS */
+
     Q_INVOKABLE bool tag(const QString &tag, const QString &color=QString(), const QString &comment=QString());
     Q_INVOKABLE bool tagUrl(const QString &url, const QString &tag, const QString &color=QString(), const QString &comment=QString());
     Q_INVOKABLE bool tagAbstract(const QString &tag, const QString &key, const QString &lot, const QString &color = QString(), const QString &comment=QString());
+
+    /* UPDATES */
+
+    Q_INVOKABLE bool updateUrlTags(const QString &url, const QStringList &tags);
+
+    /* QUERIES */
 
     Q_INVOKABLE QVariantList getUrlsTags(const bool &strict = true);
     Q_INVOKABLE QVariantList getAbstractsTags(const bool &strict = true);
@@ -25,6 +33,9 @@ public:
     Q_INVOKABLE QVariantList getUrls(const QString &tag, const bool &strict = true);
     Q_INVOKABLE QVariantList getUrlTags(const QString &url, const bool &strict = true);
     Q_INVOKABLE QVariantList getAbstractTags(const QString &key, const QString &lot, const bool &strict = true);
+
+    /* DELETES */
+    Q_INVOKABLE bool removeUrlTags(const QString &url);
 
     /*STATIC METHODS*/
 
@@ -50,6 +61,9 @@ protected:
     bool abstract(const QString &key, const QString &lot, const QString &comment);
 
 signals:
+    void urlTagged(const QString &url, const QString &tag);
+    void abstractTagged(const QString &key, const QString &lot, const QString &tag);
+    void tagged(const QString &tag);
 
 public slots:
 };
