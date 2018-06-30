@@ -42,7 +42,7 @@ void TAGDB::prepareCollectionDB() const
 {
     QSqlQuery query(this->m_db);
 
-    QFile file(":/src/utils/tagging/script.sql");
+    QFile file(":/script.sql");
 
     if (!file.exists())
     {

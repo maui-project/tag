@@ -22,3 +22,6 @@ DISTFILES += \
 
 
 API_VER=1.0
+
+RESOURCES += \
+    $$PWD/tagging.qrc
