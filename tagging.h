@@ -2,6 +2,7 @@
 #define TAGGING_H
 
 #include <QObject>
+#include <QtGlobal>
 #include <sys/user.h>
 #include "tagdb.h"
 

@@ -233,6 +233,10 @@ QString Tagging::device()
 
 QString Tagging::id()
 {
+#if QT_VERSION < QT_VERSION_CHECK(5, 1, 1)
+    return QSysInfo::machineHostName();
+#endif
+
 #ifdef Q_OS_ANDROID
     return QSysInfo::machineHostName();
 #else
