@@ -233,15 +233,15 @@ QString Tagging::device()
 
 QString Tagging::id()
 {
-#if QT_VERSION < QT_VERSION_CHECK(5, 1, 1)
     return QSysInfo::machineHostName();
-#endif
 
-#ifdef Q_OS_ANDROID
-    return QSysInfo::machineHostName();
-#else
-    return QString(QSysInfo::machineUniqueId());
-#endif
+//    qDebug()<< "VERSION IS LES THAN "<< QT_VERSION;
+
+//#if QT_VERSION < QT_VERSION_CHECK(5, 1, 1)
+//    return QSysInfo::machineHostName();
+//#else
+//    return QString(QSysInfo::machineUniqueId());
+//#endif
 }
 
 bool Tagging::app()
