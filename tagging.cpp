@@ -149,7 +149,7 @@ bool Tagging::updateUrlTags(const QString &url, const QStringList &tags)
 
 QVariantList Tagging::getUrlsTags(const bool &strict)
 {
-    auto res = !strict ? this->get("select t.* from tags t inner join TAGS_URLS turl on turl.tag = t.tag") :
+    auto res = !strict ? this->get("select distinct t.* from tags t inner join TAGS_URLS turl on turl.tag = t.tag") :
                          this->get(QString("select t.* from TAGS t inner join TAGS_USERS tu on t.tag = tu.tag "
                                            "inner join APPS_USERS au on au.mac = tu.mac "
                                            //                                           "inner join TAGS_URLS turl on turl.tag = t.tag "
