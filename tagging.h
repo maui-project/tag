@@ -51,10 +51,10 @@ private:
     static Tagging* instance;
     void setApp(const QString &app, const QString &uri, const QString &version, const QString &comment = QString());
 
-    QString application;
-    QString version;
-    QString comment;
-    QString uri;
+    QString application = QString();
+    QString version = QString();
+    QString comment = QString();
+    QString uri = QString();
 
     bool app();
     bool user();
