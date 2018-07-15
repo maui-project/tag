@@ -149,11 +149,15 @@ bool Tagging::updateUrlTags(const QString &url, const QStringList &tags)
 
 QVariantList Tagging::getUrlsTags(const bool &strict)
 {
+    auto query = QString("select distinct t.* from TAGS t inner join TAGS_USERS tu on t.tag = tu.tag "
+                         "inner join APPS_USERS au on au.mac = tu.mac "
+                         "inner join TAGS_URLS turl on turl.tag = t.tag "
+                         "where au.app = '%1' and au.uri = '%2'").arg(this->application, this->uri);
+
+    qDebug()<<"URL TAGS QUEY"<<query;
+
     auto res = !strict ? this->get("select distinct t.* from tags t inner join TAGS_URLS turl on turl.tag = t.tag") :
-                         this->get(QString("select distinct t.* from TAGS t inner join TAGS_USERS tu on t.tag = tu.tag "
-                                           "inner join APPS_USERS au on au.mac = tu.mac "
-                                           //                                           "inner join TAGS_URLS turl on turl.tag = t.tag "
-                                           "where au.app = '%1' and au.uri = '%2'").arg(this->application, this->uri));
+                         this->get(query);
     return res;
 }
 
@@ -235,13 +239,13 @@ QString Tagging::id()
 {
     return QSysInfo::machineHostName();
 
-//    qDebug()<< "VERSION IS LES THAN "<< QT_VERSION;
+    //    qDebug()<< "VERSION IS LES THAN "<< QT_VERSION;
 
-//#if QT_VERSION < QT_VERSION_CHECK(5, 1, 1)
-//    return QSysInfo::machineHostName();
-//#else
-//    return QString(QSysInfo::machineUniqueId());
-//#endif
+    //#if QT_VERSION < QT_VERSION_CHECK(5, 1, 1)
+    //    return QSysInfo::machineHostName();
+    //#else
+    //    return QString(QSysInfo::machineUniqueId());
+    //#endif
 }
 
 bool Tagging::app()
