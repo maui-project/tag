@@ -72,6 +72,8 @@ void Tagging::setApp(const QString &app, const QString &uri, const QString &vers
 
 bool Tagging::tag(const QString &tag, const QString &color, const QString &comment)
 {
+    if(tag.isEmpty()) return false;
+
     QVariantMap tag_map
     {
         {TAG::KEYMAP[TAG::KEY::TAG], tag},
@@ -182,7 +184,7 @@ QVariantList Tagging::getAllTags(const bool &strict)
 QVariantList Tagging::getUrls(const QString &tag, const bool &strict)
 {
     auto res =  !strict ? this->get(QString("select turl.*, t.color, t.comment as tagComment from TAGS t inner join TAGS_URLS turl on turl.tag = t.tag where t.tag = '%1'").arg(tag)):
-                          this->get(QString("select turl.*, t.color, t.comment as tagComment from TAGS t "
+                          this->get(QString("select distinct turl.*, t.color, t.comment as tagComment from TAGS t "
                                             "inner join TAGS_USERS tu on t.tag = tu.tag "
                                             "inner join APPS_USERS au on au.mac = tu.mac "
                                             "inner join TAGS_URLS turl on turl.tag = t.tag "
@@ -203,7 +205,7 @@ QVariantList Tagging::getUrlTags(const QString &url, const bool &strict)
 QVariantList Tagging::getAbstractTags(const QString &key, const QString &lot, const bool &strict)
 {
     auto res = !strict ? this->get(QString("select t.* from TAGS t inner join TAGS_ABSTRACT ta on ta.tag = t.tag where ta.key = '%1' and ta.lot = '%2'").arg(key, lot)) :
-                         this->get(QString("select t.* from TAGS t inner join TAGS_ABSTRACT ta on ta.tag = t.tag "
+                         this->get(QString("select distinct t.*  from TAGS t inner join TAGS_ABSTRACT ta on ta.tag = t.tag "
                                            "inner join TAGS_USERS tu on t.tag = tu.tag "
                                            "inner join APPS_USERS au on au.mac = tu.mac "
                                            "where au.app = '%1' and au.uri = '%2' and ta.key = '%3' and ta.lot = '%4'").arg(this->application, this->uri, key, lot));
