@@ -18,7 +18,8 @@ INCLUDEPATH += \
      $$PWD
 
 DISTFILES += \
-     $$PWD/script.sql
+     $$PWD/script.sql \
+    $$PWD/CMakeLists.txt
 
 
 API_VER=1.0
