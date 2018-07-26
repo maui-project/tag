@@ -147,6 +147,8 @@ bool Tagging::updateUrlTags(const QString &url, const QStringList &tags)
     this->removeUrlTags(url);
     for(auto tag : tags)
         this->tagUrl(url, tag);
+    
+    return true;
 }
 
 QVariantList Tagging::getUrlsTags(const bool &strict)
@@ -274,7 +276,7 @@ bool Tagging::app()
         {TAG::KEYMAP[TAG::KEY::ADD_DATE], QDateTime::currentDateTime()},
     };
 
-    this->insert(TAG::TABLEMAP[TAG::TABLE::APPS_USERS], users_apps_map);
+    return this->insert(TAG::TABLEMAP[TAG::TABLE::APPS_USERS], users_apps_map);
 
 }
 
